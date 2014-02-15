@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>D3 12</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link href="css/nv.d3.css" rel="stylesheet">
+   
+  <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>  
+  <script type="text/javascript" src="js/d3.js"></script>
+  <script type="text/javascript" src="js/nv.d3.js"></script> 
+</head>
+<body>
+
+<style>
+#chart1 svg {
+  height: 350px;
+  width: 600px;
+}
+#chart2 svg {
+  height: 350px;
+  width: 600px;
+}
+</style>
+
+<div id="chart1">
+  <svg></svg>
+</div>
+<div id="chart2">
+  <svg></svg>
+</div>
+
+<script type="text/javascript"> 
+
+d3.json("data1.json", function(error, data) {   
+  console.log(error);
+  console.log(data);
+  
+  nv.addGraph(function() {
+    var chart = nv.models.linePlusBarChart()
+          .margin({top: 30, right: 60, bottom: 50, left: 70})
+          .x(function(d,i) { return i })
+          .y(function(d) { return d[1] })
+          .color(d3.scale.category10().range());
+
+    chart.xAxis
+      .showMaxMin(false)
+      .tickFormat(function(d) {
+        var dx = data[0].values[d] && data[0].values[d][0] || 0;
+        return d3.time.format('%x')(new Date(dx))
+      });
+
+    chart.y1Axis
+        .tickFormat(d3.format(',f'));
+
+    chart.y2Axis
+        .tickFormat(function(d) { return '$' + d3.format(',f')(d) });
+
+    chart.bars.forceY([0]);
+
+    d3.select('#chart1 svg')
+      .datum(data)
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+});  
+
+d3.json("data2.json", function(error, data) {   
+  console.log(error);
+  console.log(data);
+  
+  nv.addGraph(function() {
+    var chart = nv.models.linePlusBarChart()
+          .margin({top: 30, right: 60, bottom: 50, left: 70})            
+          .x(function(d,i) { return i })
+          .y(function(d) { return d[1] })
+          .color(d3.scale.category10().range());
+    
+    chart.showLegend(false);   
+    
+    chart.xAxis     
+      .tickFormat(function(d) {
+        var dx = data[0].values[d] && data[0].values[d][0] || 0;
+        return d3.time.format('%x')(new Date(dx))
+      });
+
+    chart.y1Axis        
+        .tickFormat(d3.format(',f'));
+
+    chart.y2Axis          
+        .tickFormat(function(d) { return '$' + d3.format(',f')(d) });
+
+    chart.y2Axis.showMaxMin(true);  
+    chart.y2Axis.tickValues([]);   
+    
+    chart.bars.forceY([0]);
+
+    d3.select('#chart2 svg')
+      .datum(data)
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+});  
+</script>
+</body>
+</html>
